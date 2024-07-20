@@ -24,4 +24,4 @@ jobs:
           pip install -r requirements.txt
       - name: Run tests
         # run: pytest 01_new_project/log_analyzer/tests/   
-        run: python3 06_oop/scoring_api/test.py
+        run: pytest 08_pytests/scoring_api/test.py  
