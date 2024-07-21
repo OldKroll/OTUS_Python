@@ -58,6 +58,7 @@ class VmTestCase(unittest.TestCase):
             # If test code fails an assert, show it.
             raise e
         except Exception as e:
+            raise e
             # Otherwise, keep the exception for comparison later.
             if not CAPTURE_EXCEPTION:  # pragma: no cover
                 raise

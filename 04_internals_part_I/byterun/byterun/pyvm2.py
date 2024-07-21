@@ -162,9 +162,11 @@ class VirtualMachine(object):
         an instruction and optionally arguments."""
         f = self.frame
         opoffset = f.f_lasti
-        print(1)
+        print("opoffset", opoffset)
+        print("co_code")
+        print(len(f.f_code.co_code))
+        print(f.f_code.co_code[opoffset])
         byteCode = byteint(f.f_code.co_code[opoffset])
-
         f.f_lasti += 1
         byteName = dis.opname[byteCode]
         arg = None
@@ -290,6 +292,7 @@ class VirtualMachine(object):
         self.push_frame(frame)
         while True:
             byteName, arguments, opoffset = self.parse_byte_and_args()
+            print("info")
             print(byteName, arguments, opoffset)
             if log.isEnabledFor(logging.INFO):
                 self.log(byteName, arguments, opoffset)
@@ -297,6 +300,7 @@ class VirtualMachine(object):
             # When unwinding the block stack, we need to keep track of why we
             # are doing it.
             why = self.dispatch(byteName, arguments)
+            print("why")
             print(why)
 
             if why == "exception":
