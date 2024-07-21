@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from warehouse_management.domain.models import Order, Product
+from domain.models import Manager, Order, Product
 
 
 class ProductRepository(ABC):
@@ -29,4 +29,18 @@ class OrderRepository(ABC):
 
     @abstractmethod
     def list(self) -> List[Order]:
+        pass
+
+
+class ManagerRepository(ABC):
+    @abstractmethod
+    def add(self, manager: Manager):
+        pass
+
+    @abstractmethod
+    def get(self, manager_id: int) -> Manager:
+        pass
+
+    @abstractmethod
+    def list(self) -> List[Manager]:
         pass

@@ -1,7 +1,8 @@
 from typing import List
 
-from warehouse_management.domain.models import Order, Product
-from warehouse_management.domain.repositories import OrderRepository, ProductRepository
+from domain.enums import OrderStatus
+from domain.models import Order, Product
+from domain.repositories import OrderRepository, ProductRepository
 
 
 class WarehouseService:
@@ -15,6 +16,6 @@ class WarehouseService:
         return product
 
     def create_order(self, products: List[Product]) -> Order:
-        order = Order(id=None, products=products)
+        order = Order(id=None, status=OrderStatus.CREATED, products=products)
         self.order_repo.add(order)
         return order

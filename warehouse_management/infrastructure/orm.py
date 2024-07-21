@@ -9,12 +9,18 @@ class ProductORM(Base):
     __tablename__ = "products"
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    quntity = Column(Integer)
+    quantity = Column(Integer)
     price = Column(Float)
 
 
 class OrderORM(Base):
     __tablename__ = "orders"
+    id = Column(Integer, primary_key=True)
+    status = Column(String)
+
+
+class ManagerORM(Base):
+    __tablename__ = "managers"
     id = Column(Integer, primary_key=True)
 
 
@@ -25,4 +31,12 @@ order_product_assocoations = Table(
     Column("product_id", ForeignKey("products.id")),
 )
 
+manager_order_assocoations = Table(
+    "manager_order_assocoations",
+    Base.metadata,
+    Column("manager_id", ForeignKey("managers.id")),
+    Column("order_id", ForeignKey("orders.id")),
+)
+
 OrderORM.products = relationship("ProductORM", secondary=order_product_assocoations)
+ManagerORM.ordser = relationship("OrderORM", secondary=manager_order_assocoations)
