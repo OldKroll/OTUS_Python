@@ -33,7 +33,7 @@ def main():
         print(f"create product: {new_product}")
         new_order = warehouse_service.create_order([new_product])
         unit.commit()
-        print(f"create order: {new_product}")
+        print(f"create order: {new_order}")
         new_manager = warehouse_service.create_manager([new_order])
         unit.commit()
         print(f"create manager: {new_manager}")
@@ -45,6 +45,14 @@ def main():
             warehouse_service.get_order(999999)
         except ItemNotFoundException as e:
             print(f"get order expected failure: {str(e)}")
+
+        new_product = warehouse_service.create_product(
+            name="test2", quantity=2, price=200
+        )
+        unit.commit()
+        print(f"create product: {new_product}")
+        unit.rollback()
+        print("rollback")
 
 
 if __name__ == "__main__":
