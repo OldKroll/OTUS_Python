@@ -1,8 +1,11 @@
 from typing import List
 
+from domain.enums import OrderStatus
+from domain.exceptions import ItemNotFoundException
 from domain.models import Manager, Order, Product
 from domain.repositories import ManagerRepository, OrderRepository, ProductRepository
 from infrastructure.orm import ManagerORM, OrderORM, ProductORM
+from sqlalchemy import exc
 from sqlalchemy.orm import Session
 
 
@@ -15,9 +18,16 @@ class SqlAlchemyProductRepository(ProductRepository):
             name=product.name, quantity=product.quantity, price=product.price
         )
         self.session.add(product_orm)
+        self.session.flush()
+        product.id = product_orm.id
 
     def get(self, product_id: int) -> Product:
-        product_orm = self.session.query(ProductORM).filter_by(id=product_id).one()
+        try:
+            product_orm = self.session.query(ProductORM).filter_by(id=product_id).one()
+        except exc.NoResultFound:
+            raise ItemNotFoundException(
+                message=f"Product with id {product_id} does not exists", error_code=1337
+            )
         return Product(
             id=product_orm.id,
             name=product_orm.name,
@@ -44,14 +54,26 @@ class SqlAlchemyOrderRepository(OrderRepository):
             for p in order.products
         ]
         self.session.add(order_orm)
+        self.session.flush()
+        order.id = order_orm.id
 
     def get(self, order_id: int) -> Order:
-        order_orm = self.session.query(OrderORM).filter_by(id=order_id).one()
+        try:
+            order_orm = self.session.query(OrderORM).filter_by(id=order_id).one()
+        except exc.NoResultFound:
+            raise ItemNotFoundException(
+                message=f"Order with id {order_id} does not exists", error_code=1337
+            )
         products = [
             Product(id=p.id, name=p.name, quantity=p.quantity, price=p.price)
             for p in order_orm.products
         ]
-        return Order(id=order_orm.id, products=products)
+        return Order(id=order_orm.id, status=order_orm.status, products=products)
+
+    def set_order_status(self, order_id: int, status: OrderStatus) -> Order:
+        self.session.query(OrderORM).filter_by(id=order_id).update(
+            {"status": str(status)}
+        )
 
     def list(self) -> List[Product]:
         orders_orm = self.session.query(OrderORM).all()
@@ -76,9 +98,16 @@ class SqlAlchemyManagerRepository(ManagerRepository):
             for p in manager.orders
         ]
         self.session.add(manager_orm)
+        self.session.flush()
+        manager.id = manager_orm.id
 
     def get(self, manager_id: int) -> Manager:
-        manager_orm = self.session.query(ManagerORM).filter_by(id=manager_id).one()
+        try:
+            manager_orm = self.session.query(ManagerORM).filter_by(id=manager_id).one()
+        except exc.NoResultFound:
+            raise ItemNotFoundException(
+                message=f"Manager with id {manager_id} does not exists", error_code=1337
+            )
         orders = [
             Order(
                 id=o.id,

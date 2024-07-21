@@ -29,9 +29,3 @@ class Manager:
 
     def add_order(self, order: Order):
         self.orders.append(order)
-
-    def set_order_status(self, order_id: int, status: OrderStatus):
-        index = self.orders.index(lambda ord: ord.id == order_id)
-        if index == -1:
-            raise ValueError("Not found")
-        self.orders[index].status = status
