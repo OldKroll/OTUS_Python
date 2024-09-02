@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+  django-db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes: 
+      - pg_volume_django:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    ports:
+      - ${DB_PORT_EXT}:${DB_PORT_INT}
+    command: -p ${DB_PORT_INT}
+  
+  django-migrations:
+      build:
+        context: .
+        dockerfile: ./Dockerfile
+      env_file:
+      - .env
+      depends_on:
+        django-db:
+          condition: service_healthy
+      command: python3 manage.py migrate
+
+  django-service:
+      build:
+        context: .
+        dockerfile: ./Dockerfile
+      env_file:
+      - .env
+      ports:
+      - ${SERVICE_PORT_EXT}:8000
+      depends_on:
+        django-migrations:
+          condition: service_completed_successfully
+      command: python3 -m gunicorn --bind 0.0.0.0:8000 -w 2 mysite.wsgi:application
+
+
+volumes:
+  pg_volume_django:
