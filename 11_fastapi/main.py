@@ -47,7 +47,7 @@ def read_current_user(credentials: HTTPBasicCredentials = Depends(security)):
     return __authentificate_user(credentials)
 
 
-@app.post("/users/", response_model=User)
+@app.post("/user", response_model=User)
 def create_user(user: User):
     """Создание нового пользователя"""
     hashed_password = pwd_context.hash("secret")
