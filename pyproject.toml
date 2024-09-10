@@ -13,6 +13,10 @@ redis = "^5.0.7"
 sqlalchemy = "^2.0.31"
 django = "^5.0.8"
 psycopg2 = "^2.9.9"
+fastapi = "^0.114.0"
+uvicorn = "^0.30.6"
+passlib = "^1.7.4"
+bcrypt = "^4.2.0"
 
 
 [tool.poetry.group.dev.dependencies]
