@@ -167,3 +167,5 @@ cython_debug/
 # *.gz temporary disabled
 *.tar.gz
 
+
+16_mthreading/homework/data/

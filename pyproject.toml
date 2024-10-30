@@ -26,6 +26,8 @@ pandas = "^2.2.3"
 tqdm = "^4.66.5"
 matplotlib = "^3.9.2"
 seaborn = "^0.13.2"
+python-memcached = "^1.62"
+protobuf = "^5.28.3"
 
 
 [tool.poetry.group.dev.dependencies]
