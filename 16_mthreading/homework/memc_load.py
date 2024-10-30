@@ -29,7 +29,7 @@ def dot_rename(path):
     os.rename(path, os.path.join(head, "." + fn))
 
 
-def insert_appsinstalled(memc_client, appsinstalled, dry_run=False):
+def insert_appsinstalled(memc_client, appsinstalled, dry=False):
     ua = appsinstalled_pb2.UserApps()
     ua.lat = appsinstalled.lat
     ua.lon = appsinstalled.lon
@@ -39,15 +39,18 @@ def insert_appsinstalled(memc_client, appsinstalled, dry_run=False):
 
     for _ in range(RETRY_NUMBER):
         try:
-            if dry_run:
+            if dry:
                 logging.debug(
-                    "%s - %s -> %s" % (memc_addr, key, str(ua).replace("\n", " "))
+                    "%s - %s -> %s"
+                    % (memc_client.servers, key, str(ua).replace("\n", " "))
                 )
             else:
-                memc_client.set(key, packed)
-                return True
+                memc_client.set_multi({key: packed})
+            return True
         except Exception as exc:
-            logging.exception("Cannot write to memc %s: %s" % (memc_addr, exc))
+            logging.exception(
+                "Cannot write to memc %s: %s" % (memc_client.servers, exc)
+            )
             return False
 
 
