@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html class='v2' dir='ltr' lang='en'>
+<head>
+<link href='https://www.blogger.com/static/v1/widgets/1539816172-widget_css_mobile_2_bundle.css' rel='stylesheet' type='text/css'/>
+<meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0' name='viewport'/>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+<meta content='blogger' name='generator'/>
+<link href='http://blog.apedroid.com/favicon.ico' rel='icon' type='image/x-icon'/>
+<link href='http://blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html' rel='canonical'/>
+<link rel="alternate" type="application/atom+xml" title="apedroid - Atom" href="http://blog.apedroid.com/feeds/posts/default" />
+<link rel="alternate" type="application/rss+xml" title="apedroid - RSS" href="http://blog.apedroid.com/feeds/posts/default?alt=rss" />
+<link rel="service.post" type="application/atom+xml" title="apedroid - Atom" href="https://www.blogger.com/feeds/8455893882609029883/posts/default" />
+
+<link rel="alternate" type="application/atom+xml" title="apedroid - Atom" href="http://blog.apedroid.com/feeds/2820185294462860160/comments/default" />
+<!--Can't find substitution for tag [blog.ieCssRetrofitLinks]-->
+<link href='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifQJWFYqs9tGpCbn0wh8UCIQrxzVCzwPXhYz5ZY7KeHFYsIcKVEyKm1EasnRBbiru0zC0iVsneibR8JF6QPRcloCtHb4sxvMCWy_dABsJdK-nhWCPhv7h36xhUb04XdIG5tlY1zVdXgtnt/s1600/epic_binary_translation.png' rel='image_src'/>
+<meta content='http://blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html' property='og:url'/>
+<meta content='Binary translation vs native x86 code' property='og:title'/>
+<meta content='I recently bought an Asus Fonepad partly because I wanted to test an Intel based Android device. It turned out it&#39;s a really nice device and...' property='og:description'/>
+<meta content='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifQJWFYqs9tGpCbn0wh8UCIQrxzVCzwPXhYz5ZY7KeHFYsIcKVEyKm1EasnRBbiru0zC0iVsneibR8JF6QPRcloCtHb4sxvMCWy_dABsJdK-nhWCPhv7h36xhUb04XdIG5tlY1zVdXgtnt/w1200-h630-p-k-no-nu/epic_binary_translation.png' property='og:image'/>
+<title>apedroid: Binary translation vs native x86 code</title>
+<style id='page-skin-1' type='text/css'><!--
+/*
+-----------------------------------------------
+Blogger Template Style
+Name:     Awesome Inc.
+Designer: Tina Chen
+URL:      tinachen.org
+----------------------------------------------- */
+/* Content
+----------------------------------------------- */
+body {
+font: normal normal 13px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+color: #333333;
+background: #ffffff none repeat scroll top left;
+}
+html body .content-outer {
+min-width: 0;
+max-width: 100%;
+width: 100%;
+}
+a:link {
+text-decoration: none;
+color: #d52a33;
+}
+a:visited {
+text-decoration: none;
+color: #7d181e;
+}
+a:hover {
+text-decoration: underline;
+color: #d52a33;
+}
+.body-fauxcolumn-outer .cap-top {
+position: absolute;
+z-index: 1;
+height: 276px;
+width: 100%;
+background: transparent none repeat-x scroll top left;
+_background-image: none;
+}
+/* Columns
+----------------------------------------------- */
+.content-inner {
+padding: 0;
+}
+.header-inner .section {
+margin: 0 16px;
+}
+.tabs-inner .section {
+margin: 0 16px;
+}
+.main-inner {
+padding-top: 30px;
+}
+.main-inner .column-center-inner,
+.main-inner .column-left-inner,
+.main-inner .column-right-inner {
+padding: 0 5px;
+}
+*+html body .main-inner .column-center-inner {
+margin-top: -30px;
+}
+#layout .main-inner .column-center-inner {
+margin-top: 0;
+}
+/* Header
+----------------------------------------------- */
+.header-outer {
+margin: 0 0 0 0;
+background: transparent none repeat scroll 0 0;
+}
+.Header h1 {
+font: normal normal 48px Georgia, Utopia, 'Palatino Linotype', Palatino, serif;
+color: #333333;
+text-shadow: 0 0 -1px #000000;
+}
+.Header h1 a {
+color: #333333;
+}
+.Header .description {
+font: normal normal 20px Georgia, Utopia, 'Palatino Linotype', Palatino, serif;
+color: #908d6a;
+}
+.header-inner .Header .titlewrapper,
+.header-inner .Header .descriptionwrapper {
+padding-left: 0;
+padding-right: 0;
+margin-bottom: 0;
+}
+.header-inner .Header .titlewrapper {
+padding-top: 22px;
+}
+/* Tabs
+----------------------------------------------- */
+.tabs-outer {
+overflow: hidden;
+position: relative;
+background: #b3ca88 url(https://resources.blogblog.com/blogblog/data/1kt/awesomeinc/tabs_gradient_light.png) repeat scroll 0 0;
+}
+#layout .tabs-outer {
+overflow: visible;
+}
+.tabs-cap-top, .tabs-cap-bottom {
+position: absolute;
+width: 100%;
+border-top: 1px solid #908d6a;
+}
+.tabs-cap-bottom {
+bottom: 0;
+}
+.tabs-inner .widget li a {
+display: inline-block;
+margin: 0;
+padding: .6em 1.5em;
+font: normal normal 13px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+color: #333333;
+border-top: 1px solid #908d6a;
+border-bottom: 1px solid #908d6a;
+border-left: 1px solid #908d6a;
+height: 16px;
+line-height: 16px;
+}
+.tabs-inner .widget li:last-child a {
+border-right: 1px solid #908d6a;
+}
+.tabs-inner .widget li.selected a, .tabs-inner .widget li a:hover {
+background: #63704b url(https://resources.blogblog.com/blogblog/data/1kt/awesomeinc/tabs_gradient_light.png) repeat-x scroll 0 -100px;
+color: #ffffff;
+}
+/* Headings
+----------------------------------------------- */
+h2 {
+font: normal bold 14px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+color: #333333;
+}
+/* Widgets
+----------------------------------------------- */
+.main-inner .section {
+margin: 0 27px;
+padding: 0;
+}
+.main-inner .column-left-outer,
+.main-inner .column-right-outer {
+margin-top: 0;
+}
+#layout .main-inner .column-left-outer,
+#layout .main-inner .column-right-outer {
+margin-top: 0;
+}
+.main-inner .column-left-inner,
+.main-inner .column-right-inner {
+background: transparent none repeat 0 0;
+-moz-box-shadow: 0 0 0 rgba(0, 0, 0, .2);
+-webkit-box-shadow: 0 0 0 rgba(0, 0, 0, .2);
+-goog-ms-box-shadow: 0 0 0 rgba(0, 0, 0, .2);
+box-shadow: 0 0 0 rgba(0, 0, 0, .2);
+-moz-border-radius: 0;
+-webkit-border-radius: 0;
+-goog-ms-border-radius: 0;
+border-radius: 0;
+}
+#layout .main-inner .column-left-inner,
+#layout .main-inner .column-right-inner {
+margin-top: 0;
+}
+.sidebar .widget {
+font: normal normal 14px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+color: #333333;
+}
+.sidebar .widget a:link {
+color: #d52a33;
+}
+.sidebar .widget a:visited {
+color: #7d181e;
+}
+.sidebar .widget a:hover {
+color: #d52a33;
+}
+.sidebar .widget h2 {
+text-shadow: 0 0 -1px #000000;
+}
+.main-inner .widget {
+background-color: #fefdfa;
+border: 1px solid #a4c639;
+padding: 0 15px 15px;
+margin: 20px -16px;
+-moz-box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+-webkit-box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+-goog-ms-box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+-moz-border-radius: 0;
+-webkit-border-radius: 0;
+-goog-ms-border-radius: 0;
+border-radius: 0;
+}
+.main-inner .widget h2 {
+margin: 0 -0;
+padding: .6em 0 .5em;
+border-bottom: 1px solid transparent;
+}
+.footer-inner .widget h2 {
+padding: 0 0 .4em;
+border-bottom: 1px solid transparent;
+}
+.main-inner .widget h2 + div, .footer-inner .widget h2 + div {
+border-top: 1px solid #a4c639;
+padding-top: 8px;
+}
+.main-inner .widget .widget-content {
+margin: 0 -0;
+padding: 7px 0 0;
+}
+.main-inner .widget ul, .main-inner .widget #ArchiveList ul.flat {
+margin: -8px -15px 0;
+padding: 0;
+list-style: none;
+}
+.main-inner .widget #ArchiveList {
+margin: -8px 0 0;
+}
+.main-inner .widget ul li, .main-inner .widget #ArchiveList ul.flat li {
+padding: .5em 15px;
+text-indent: 0;
+color: #666666;
+border-top: 0 solid #a4c639;
+border-bottom: 1px solid transparent;
+}
+.main-inner .widget #ArchiveList ul li {
+padding-top: .25em;
+padding-bottom: .25em;
+}
+.main-inner .widget ul li:first-child, .main-inner .widget #ArchiveList ul.flat li:first-child {
+border-top: none;
+}
+.main-inner .widget ul li:last-child, .main-inner .widget #ArchiveList ul.flat li:last-child {
+border-bottom: none;
+}
+.post-body {
+position: relative;
+}
+.main-inner .widget .post-body ul {
+padding: 0 2.5em;
+margin: .5em 0;
+list-style: disc;
+}
+.main-inner .widget .post-body ul li {
+padding: 0.25em 0;
+margin-bottom: .25em;
+color: #333333;
+border: none;
+}
+.footer-inner .widget ul {
+padding: 0;
+list-style: none;
+}
+.widget .zippy {
+color: #666666;
+}
+/* Posts
+----------------------------------------------- */
+body .main-inner .Blog {
+padding: 0;
+margin-bottom: 1em;
+background-color: transparent;
+border: none;
+-moz-box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+-webkit-box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+-goog-ms-box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+.main-inner .section:last-child .Blog:last-child {
+padding: 0;
+margin-bottom: 1em;
+}
+.main-inner .widget h2.date-header {
+margin: 0 -15px 1px;
+padding: 0 0 0 0;
+font: normal normal 13px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+color: #908d6a;
+background: transparent none no-repeat scroll top left;
+border-top: 0 solid #a4c639;
+border-bottom: 1px solid transparent;
+-moz-border-radius-topleft: 0;
+-moz-border-radius-topright: 0;
+-webkit-border-top-left-radius: 0;
+-webkit-border-top-right-radius: 0;
+border-top-left-radius: 0;
+border-top-right-radius: 0;
+position: static;
+bottom: 100%;
+right: 15px;
+text-shadow: 0 0 -1px #000000;
+}
+.main-inner .widget h2.date-header span {
+font: normal normal 13px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+display: block;
+padding: .5em 15px;
+border-left: 0 solid #a4c639;
+border-right: 0 solid #a4c639;
+}
+.date-outer {
+position: relative;
+margin: 30px 0 20px;
+padding: 0 15px;
+background-color: #fefdfa;
+border: 1px solid #a4c639;
+-moz-box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+-webkit-box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+-goog-ms-box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+-moz-border-radius: 0;
+-webkit-border-radius: 0;
+-goog-ms-border-radius: 0;
+border-radius: 0;
+}
+.date-outer:first-child {
+margin-top: 0;
+}
+.date-outer:last-child {
+margin-bottom: 20px;
+-moz-border-radius-bottomleft: 5px;
+-moz-border-radius-bottomright: 5px;
+-webkit-border-bottom-left-radius: 5px;
+-webkit-border-bottom-right-radius: 5px;
+-goog-ms-border-bottom-left-radius: 5px;
+-goog-ms-border-bottom-right-radius: 5px;
+border-bottom-left-radius: 5px;
+border-bottom-right-radius: 5px;
+}
+.date-posts {
+margin: 0 -0;
+padding: 0 0;
+clear: both;
+}
+.post-outer, .inline-ad {
+border-top: 1px solid #a4c639;
+margin: 0 -0;
+padding: 15px 0;
+}
+.post-outer {
+padding-bottom: 10px;
+}
+.post-outer:first-child {
+padding-top: 0;
+border-top: none;
+}
+.post-outer:last-child, .inline-ad:last-child {
+border-bottom: none;
+}
+.post-body {
+position: relative;
+}
+.post-body img {
+padding: 8px;
+background: #ffffff;
+border: 1px solid #cccccc;
+-moz-box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+-webkit-box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+border-radius: 5px;
+}
+h3.post-title, h4 {
+font: normal normal 22px Georgia, Utopia, 'Palatino Linotype', Palatino, serif;
+color: #a4c639;
+}
+h3.post-title a {
+font: normal normal 22px Georgia, Utopia, 'Palatino Linotype', Palatino, serif;
+color: #a4c639;
+}
+h3.post-title a:hover {
+color: #d52a33;
+text-decoration: underline;
+}
+.post-header {
+margin: 0 0 1em;
+}
+.post-body {
+line-height: 1.4;
+}
+.post-outer h2 {
+color: #333333;
+}
+.post-footer {
+margin: 1.5em 0 0;
+}
+#blog-pager {
+padding: 15px;
+font-size: 120%;
+background-color: #fefdfa;
+border: 1px solid #a4c639;
+-moz-box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+-webkit-box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+-goog-ms-box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+-moz-border-radius: 0;
+-webkit-border-radius: 0;
+-goog-ms-border-radius: 0;
+border-radius: 0;
+-moz-border-radius-topleft: 0;
+-moz-border-radius-topright: 0;
+-webkit-border-top-left-radius: 0;
+-webkit-border-top-right-radius: 0;
+-goog-ms-border-top-left-radius: 0;
+-goog-ms-border-top-right-radius: 0;
+border-top-left-radius: 0;
+border-top-right-radius-topright: 0;
+margin-top: 1em;
+}
+.blog-feeds, .post-feeds {
+margin: 1em 0;
+text-align: center;
+color: #333333;
+}
+.blog-feeds a, .post-feeds a {
+color: #d52a33;
+}
+.blog-feeds a:visited, .post-feeds a:visited {
+color: #7d181e;
+}
+.blog-feeds a:hover, .post-feeds a:hover {
+color: #d52a33;
+}
+.post-outer .comments {
+margin-top: 2em;
+}
+/* Comments
+----------------------------------------------- */
+.comments .comments-content .icon.blog-author {
+background-repeat: no-repeat;
+background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEgAACxIB0t1+/AAAAAd0SU1FB9sLFwMeCjjhcOMAAAD+SURBVDjLtZSvTgNBEIe/WRRnm3U8RC1neQdsm1zSBIU9VVF1FkUguQQsD9ITmD7ECZIJSE4OZo9stoVjC/zc7ky+zH9hXwVwDpTAWWLrgS3QAe8AZgaAJI5zYAmc8r0G4AHYHQKVwII8PZrZFsBFkeRCABYiMh9BRUhnSkPTNCtVXYXURi1FpBDgArj8QU1eVXUzfnjv7yP7kwu1mYrkWlU33vs1QNu2qU8pwN0UpKoqokjWwCztrMuBhEhmh8bD5UDqur75asbcX0BGUB9/HAMB+r32hznJgXy2v0sGLBcyAJ1EK3LFcbo1s91JeLwAbwGYu7TP/3ZGfnXYPgAVNngtqatUNgAAAABJRU5ErkJggg==);
+}
+.comments .comments-content .loadmore a {
+border-top: 1px solid #908d6a;
+border-bottom: 1px solid #908d6a;
+}
+.comments .continue {
+border-top: 2px solid #908d6a;
+}
+/* Footer
+----------------------------------------------- */
+.footer-outer {
+margin: -20px 0 -1px;
+padding: 20px 0 0;
+color: #333333;
+overflow: hidden;
+}
+.footer-fauxborder-left {
+border-top: 1px solid #a4c639;
+background: #fefdfa none repeat scroll 0 0;
+-moz-box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+-webkit-box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+-goog-ms-box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+margin: 0 -20px;
+}
+/* Mobile
+----------------------------------------------- */
+body.mobile {
+background-size: auto;
+}
+.mobile .body-fauxcolumn-outer {
+background: transparent none repeat scroll top left;
+}
+*+html body.mobile .main-inner .column-center-inner {
+margin-top: 0;
+}
+.mobile .main-inner .widget {
+padding: 0 0 15px;
+}
+.mobile .main-inner .widget h2 + div,
+.mobile .footer-inner .widget h2 + div {
+border-top: none;
+padding-top: 0;
+}
+.mobile .footer-inner .widget h2 {
+padding: 0.5em 0;
+border-bottom: none;
+}
+.mobile .main-inner .widget .widget-content {
+margin: 0;
+padding: 7px 0 0;
+}
+.mobile .main-inner .widget ul,
+.mobile .main-inner .widget #ArchiveList ul.flat {
+margin: 0 -15px 0;
+}
+.mobile .main-inner .widget h2.date-header {
+right: 0;
+}
+.mobile .date-header span {
+padding: 0.4em 0;
+}
+.mobile .date-outer:first-child {
+margin-bottom: 0;
+border: 1px solid #a4c639;
+-moz-border-radius-topleft: 5px;
+-moz-border-radius-topright: 5px;
+-webkit-border-top-left-radius: 5px;
+-webkit-border-top-right-radius: 5px;
+-goog-ms-border-top-left-radius: 5px;
+-goog-ms-border-top-right-radius: 5px;
+border-top-left-radius: 5px;
+border-top-right-radius: 5px;
+}
+.mobile .date-outer {
+border-color: #a4c639;
+border-width: 0 1px 1px;
+}
+.mobile .date-outer:last-child {
+margin-bottom: 0;
+}
+.mobile .main-inner {
+padding: 0;
+}
+.mobile .header-inner .section {
+margin: 0;
+}
+.mobile .post-outer, .mobile .inline-ad {
+padding: 5px 0;
+}
+.mobile .tabs-inner .section {
+margin: 0 10px;
+}
+.mobile .main-inner .widget h2 {
+margin: 0;
+padding: 0;
+}
+.mobile .main-inner .widget h2.date-header span {
+padding: 0;
+}
+.mobile .main-inner .widget .widget-content {
+margin: 0;
+padding: 7px 0 0;
+}
+.mobile #blog-pager {
+border: 1px solid transparent;
+background: #fefdfa none repeat scroll 0 0;
+}
+.mobile .main-inner .column-left-inner,
+.mobile .main-inner .column-right-inner {
+background: transparent none repeat 0 0;
+-moz-box-shadow: none;
+-webkit-box-shadow: none;
+-goog-ms-box-shadow: none;
+box-shadow: none;
+}
+.mobile .date-posts {
+margin: 0;
+padding: 0;
+}
+.mobile .footer-fauxborder-left {
+margin: 0;
+border-top: inherit;
+}
+.mobile .main-inner .section:last-child .Blog:last-child {
+margin-bottom: 0;
+}
+.mobile-index-contents {
+color: #333333;
+}
+.mobile .mobile-link-button {
+background: #d52a33 url(https://resources.blogblog.com/blogblog/data/1kt/awesomeinc/tabs_gradient_light.png) repeat scroll 0 0;
+}
+.mobile-link-button a:link, .mobile-link-button a:visited {
+color: #ffffff;
+}
+.mobile .tabs-inner .PageList .widget-content {
+background: transparent;
+border-top: 1px solid;
+border-color: #908d6a;
+color: #333333;
+}
+.mobile .tabs-inner .PageList .widget-content .pagelist-arrow {
+border-left: 1px solid #908d6a;
+}
+
+--></style>
+<style id='template-skin-1' type='text/css'><!--
+body {
+min-width: 960px;
+}
+.content-outer, .content-fauxcolumn-outer, .region-inner {
+min-width: 960px;
+max-width: 960px;
+_width: 960px;
+}
+.main-inner .columns {
+padding-left: 0;
+padding-right: 0;
+}
+.main-inner .fauxcolumn-center-outer {
+left: 0;
+right: 0;
+/* IE6 does not respect left and right together */
+_width: expression(this.parentNode.offsetWidth -
+parseInt("0") -
+parseInt("0") + 'px');
+}
+.main-inner .fauxcolumn-left-outer {
+width: 0;
+}
+.main-inner .fauxcolumn-right-outer {
+width: 0;
+}
+.main-inner .column-left-outer {
+width: 0;
+right: 100%;
+margin-left: -0;
+}
+.main-inner .column-right-outer {
+width: 0;
+margin-right: -0;
+}
+#layout {
+min-width: 0;
+}
+#layout .content-outer {
+min-width: 0;
+width: 800px;
+}
+#layout .region-inner {
+min-width: 0;
+width: auto;
+}
+body#layout div.add_widget {
+padding: 8px;
+}
+body#layout div.add_widget a {
+margin-left: 32px;
+}
+--></style>
+<script type='text/javascript'>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-37080104-1', 'auto', 'blogger');
+        ga('blogger.send', 'pageview');
+      </script>
+<link href='https://www.blogger.com/dyn-css/authorization.css?targetBlogID=8455893882609029883&amp;zx=86a18fa3-41e2-4b33-9d14-a6529e5f16cb' media='none' onload='if(media!=&#39;all&#39;)media=&#39;all&#39;' rel='stylesheet'/><noscript><link href='https://www.blogger.com/dyn-css/authorization.css?targetBlogID=8455893882609029883&amp;zx=86a18fa3-41e2-4b33-9d14-a6529e5f16cb' rel='stylesheet'/></noscript>
+<meta name='google-adsense-platform-account' content='ca-host-pub-1556223355139109'/>
+<meta name='google-adsense-platform-domain' content='blogspot.com'/>
+
+<!-- data-ad-client=ca-pub-4787149681452915 -->
+
+</head>
+<body class='loading mobile variant-renewable'>
+<div class='navbar section' id='navbar' name='Navbar'><div class='widget Navbar' data-version='1' id='Navbar1'><script type="text/javascript">
+    function setAttributeOnload(object, attribute, val) {
+      if(window.addEventListener) {
+        window.addEventListener('load',
+          function(){ object[attribute] = val; }, false);
+      } else {
+        window.attachEvent('onload', function(){ object[attribute] = val; });
+      }
+    }
+  </script>
+<script type="text/javascript">
+(function() {
+var script = document.createElement('script');
+script.type = 'text/javascript';
+script.src = '//pagead2.googlesyndication.com/pagead/js/google_top_exp.js';
+var head = document.getElementsByTagName('head')[0];
+if (head) {
+head.appendChild(script);
+}})();
+</script>
+</div></div>
+<div class='body-fauxcolumns'>
+<div class='fauxcolumn-outer body-fauxcolumn-outer'>
+<div class='cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left'>
+<div class='fauxborder-right'></div>
+<div class='fauxcolumn-inner'>
+</div>
+</div>
+<div class='cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+</div>
+<div class='content'>
+<div class='content-fauxcolumns'>
+<div class='fauxcolumn-outer content-fauxcolumn-outer'>
+<div class='cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left'>
+<div class='fauxborder-right'></div>
+<div class='fauxcolumn-inner'>
+</div>
+</div>
+<div class='cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+</div>
+<div class='content-outer'>
+<div class='content-cap-top cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left content-fauxborder-left'>
+<div class='fauxborder-right content-fauxborder-right'></div>
+<div class='content-inner'>
+<header>
+<div class='header-outer'>
+<div class='header-cap-top cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left header-fauxborder-left'>
+<div class='fauxborder-right header-fauxborder-right'></div>
+<div class='region-inner header-inner'>
+<div class='header section' id='header' name='Header'><div class='widget AdSense' data-version='1' id='AdSenseMobileHEADER'>
+<div class='widget-content'>
+<script type="text/javascript"><!--
+google_ad_client="pub-4787149681452915";
+google_ad_format="320X50_mb";
+google_ad_type="text_image";
+google_ad_width=320;
+google_ad_height=50;
+google_ad_host="pub-1556223355139109";
+
+
+
+
+google_ad_host_channel="0001+S0009+L0007";
+google_color_border="FFFFFF";
+google_color_bg="FFFFFF";
+google_color_link="A4C639";
+google_color_url="908D6A";
+google_color_text="333333";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+<div class='clear'></div>
+</div>
+</div><div class='widget Header' data-version='1' id='Header1'>
+<div id='header-inner'>
+<a href='http://blog.apedroid.com/?m=1' style='display: block'>
+<img alt='apedroid' height='auto; ' id='Header1_headerimg' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi1vFri2PG6K5OaC9VospmogJplmmzDV1mHdLkLbnSXNghjW6EdANv5PcKBNeO3ol50ogVcDe0Yvcb_zbu5RMPHvi7QsLe_WgVdMxHO5rdgcWXHaDTuPaEcUWcyvbpIcqSbdUrTArVlRkvx/s400/logo.png' style='display: block' width='100%; '/>
+</a>
+</div>
+</div></div>
+</div>
+</div>
+<div class='header-cap-bottom cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+</header>
+<div class='tabs-outer'>
+<div class='tabs-cap-top cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left tabs-fauxborder-left'>
+<div class='fauxborder-right tabs-fauxborder-right'></div>
+<div class='region-inner tabs-inner'>
+<div class='tabs no-items section' id='crosscol' name='Cross-Column'></div>
+<div class='tabs no-items section' id='crosscol-overflow' name='Cross-Column 2'></div>
+</div>
+</div>
+<div class='tabs-cap-bottom cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+<div class='main-outer'>
+<div class='main-cap-top cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left main-fauxborder-left'>
+<div class='fauxborder-right main-fauxborder-right'></div>
+<div class='region-inner main-inner'>
+<div class='columns fauxcolumns'>
+<div class='fauxcolumn-outer fauxcolumn-center-outer'>
+<div class='cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left'>
+<div class='fauxborder-right'></div>
+<div class='fauxcolumn-inner'>
+</div>
+</div>
+<div class='cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+<div class='fauxcolumn-outer fauxcolumn-left-outer'>
+<div class='cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left'>
+<div class='fauxborder-right'></div>
+<div class='fauxcolumn-inner'>
+</div>
+</div>
+<div class='cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+<div class='fauxcolumn-outer fauxcolumn-right-outer'>
+<div class='cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left'>
+<div class='fauxborder-right'></div>
+<div class='fauxcolumn-inner'>
+</div>
+</div>
+<div class='cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+<!-- corrects IE6 width calculation -->
+<div class='columns-inner'>
+<div class='column-center-outer'>
+<div class='column-center-inner'>
+<div class='main section' id='main' name='Main'><div class='widget Blog' data-version='1' id='Blog1'>
+<div class='blog-posts hfeed'>
+<div class='date-outer'>
+<h2 class='date-header'><span>Wednesday, May 15, 2013</span></h2>
+<div class='date-posts'>
+<div class='post-outer'>
+<div class='post hentry uncustomized-post-template' itemscope='itemscope' itemtype='http://schema.org/BlogPosting'>
+<meta content='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifQJWFYqs9tGpCbn0wh8UCIQrxzVCzwPXhYz5ZY7KeHFYsIcKVEyKm1EasnRBbiru0zC0iVsneibR8JF6QPRcloCtHb4sxvMCWy_dABsJdK-nhWCPhv7h36xhUb04XdIG5tlY1zVdXgtnt/s72-c/epic_binary_translation.png' itemprop='image_url'/>
+<meta content='8455893882609029883' itemprop='blogId'/>
+<meta content='2820185294462860160' itemprop='postId'/>
+<a name='2820185294462860160'></a>
+<h3 class='post-title entry-title' itemprop='name'>
+Binary translation vs native x86 code
+</h3>
+<div class='post-header'>
+<div class='post-header-line-1'></div>
+</div>
+<div class='post-body entry-content' id='post-body-2820185294462860160' itemprop='articleBody'>
+I recently bought an Asus Fonepad partly because I wanted to test an Intel based Android device. It turned out it's a really nice device and surprisingly almost everything I tried on it worked well. I didn't expect this since many apps contains native code and a lot of them only comes with native code compiled for ARM based devices.<br />
+<br />
+After some research I found out that Intel based Android devices comes with a library (libhoudini.so) that uses binary translation to translate native ARM code into native x86 code. This explains the very good app compatibility but it also made me wonder how much performance we give up for compatibility.<br />
+<br />
+As I noticed that the Epic Citadel app performed almost identical on my Nexus 4 and the Fonepad I had a look into the apk and noticed it comes with native code for both ARM and x86 devices. That gave me an idea and I created two versions of the apk. On version only contains the native ARM code and the other only the native x86 code. That allowed me to do a comparison and here's the results.<br />
+<br />
+The tests was made on an Asus Fonepad with firmware version 3.1.17 and version 1.0.5 of the Epic Citadel app.<br />
+<br />
+First out is the version with only native ARM code: <br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifQJWFYqs9tGpCbn0wh8UCIQrxzVCzwPXhYz5ZY7KeHFYsIcKVEyKm1EasnRBbiru0zC0iVsneibR8JF6QPRcloCtHb4sxvMCWy_dABsJdK-nhWCPhv7h36xhUb04XdIG5tlY1zVdXgtnt/s1600/epic_binary_translation.png" imageanchor="1" style=""><img border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifQJWFYqs9tGpCbn0wh8UCIQrxzVCzwPXhYz5ZY7KeHFYsIcKVEyKm1EasnRBbiru0zC0iVsneibR8JF6QPRcloCtHb4sxvMCWy_dABsJdK-nhWCPhv7h36xhUb04XdIG5tlY1zVdXgtnt/s1600/epic_binary_translation.png" /></a></div>
+<br />
+Then another run with the version with only native x86 code:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEixp-ESpDJCp234j_80SkgU_SRyFK8U6eHEyTagYlkKBYOudxoxUR_HnYFFFATcGyDbA3EPJDtl9tYnC-c2VEJX0aFosATRCvmKpZ_QYNIAvJGhFpuJvyZ1TgLaZX-ooZNn9MyaxzS5csoL/s1600/epic_native_x86.png" imageanchor="1" style=""><img border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEixp-ESpDJCp234j_80SkgU_SRyFK8U6eHEyTagYlkKBYOudxoxUR_HnYFFFATcGyDbA3EPJDtl9tYnC-c2VEJX0aFosATRCvmKpZ_QYNIAvJGhFpuJvyZ1TgLaZX-ooZNn9MyaxzS5csoL/s1600/epic_native_x86.png" /></a></div>
+<br />
+As you can see the version with native x86 code scored over 40% better compared to the version that relied on binary translation.<br />
+<br />
+So while the binary translation is a good thing for compatibility there is also a risk that developers takes the easy route and decides not to include native x86 code for their apps. 
+<div style='clear: both;'></div>
+</div>
+<div class='post-footer'>
+<div class='post-footer-line post-footer-line-1'>
+<span class='post-author vcard'>
+<span class='fn' itemprop='author' itemscope='itemscope' itemtype='http://schema.org/Person'>
+<span itemprop='name'>apedroid</span>
+</span>
+</span>
+<span class='post-timestamp'>
+kl.
+<meta content='http://blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html' itemprop='url'/>
+<a class='timestamp-link' href='http://blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html?m=1' rel='bookmark' title='permanent link'><abbr class='published' itemprop='datePublished' title='2013-05-15T22:12:00+02:00'>10:12&#8239;PM</abbr></a>
+</span>
+<span class='post-comment-link'>
+</span>
+</div>
+<div class='post-footer-line post-footer-line-2'>
+<div class='mobile-link-button goog-inline-block' id='mobile-share-button'>
+<a href='javascript:void(0);'>Share</a>
+</div>
+</div>
+</div>
+</div>
+<div class='comments' id='comments'>
+<a name='comments'></a>
+<h4>7 comments:</h4>
+<div class='comments-content'>
+<script async='async' src='' type='text/javascript'></script>
+<script type='text/javascript'>
+    (function() {
+      var items = null;
+      var msgs = null;
+      var config = {};
+
+// <![CDATA[
+      var cursor = null;
+      if (items && items.length > 0) {
+        cursor = parseInt(items[items.length - 1].timestamp) + 1;
+      }
+
+      var bodyFromEntry = function(entry) {
+        var text = (entry &&
+                    ((entry.content && entry.content.$t) ||
+                     (entry.summary && entry.summary.$t))) ||
+            '';
+        if (entry && entry.gd$extendedProperty) {
+          for (var k in entry.gd$extendedProperty) {
+            if (entry.gd$extendedProperty[k].name == 'blogger.contentRemoved') {
+              return '<span class="deleted-comment">' + text + '</span>';
+            }
+          }
+        }
+        return text;
+      }
+
+      var parse = function(data) {
+        cursor = null;
+        var comments = [];
+        if (data && data.feed && data.feed.entry) {
+          for (var i = 0, entry; entry = data.feed.entry[i]; i++) {
+            var comment = {};
+            // comment ID, parsed out of the original id format
+            var id = /blog-(\d+).post-(\d+)/.exec(entry.id.$t);
+            comment.id = id ? id[2] : null;
+            comment.body = bodyFromEntry(entry);
+            comment.timestamp = Date.parse(entry.published.$t) + '';
+            if (entry.author && entry.author.constructor === Array) {
+              var auth = entry.author[0];
+              if (auth) {
+                comment.author = {
+                  name: (auth.name ? auth.name.$t : undefined),
+                  profileUrl: (auth.uri ? auth.uri.$t : undefined),
+                  avatarUrl: (auth.gd$image ? auth.gd$image.src : undefined)
+                };
+              }
+            }
+            if (entry.link) {
+              if (entry.link[2]) {
+                comment.link = comment.permalink = entry.link[2].href;
+              }
+              if (entry.link[3]) {
+                var pid = /.*comments\/default\/(\d+)\?.*/.exec(entry.link[3].href);
+                if (pid && pid[1]) {
+                  comment.parentId = pid[1];
+                }
+              }
+            }
+            comment.deleteclass = 'item-control blog-admin';
+            if (entry.gd$extendedProperty) {
+              for (var k in entry.gd$extendedProperty) {
+                if (entry.gd$extendedProperty[k].name == 'blogger.itemClass') {
+                  comment.deleteclass += ' ' + entry.gd$extendedProperty[k].value;
+                } else if (entry.gd$extendedProperty[k].name == 'blogger.displayTime') {
+                  comment.displayTime = entry.gd$extendedProperty[k].value;
+                }
+              }
+            }
+            comments.push(comment);
+          }
+        }
+        return comments;
+      };
+
+      var paginator = function(callback) {
+        if (hasMore()) {
+          var url = config.feed + '?alt=json&v=2&orderby=published&reverse=false&max-results=50';
+          if (cursor) {
+            url += '&published-min=' + new Date(cursor).toISOString();
+          }
+          window.bloggercomments = function(data) {
+            var parsed = parse(data);
+            cursor = parsed.length < 50 ? null
+                : parseInt(parsed[parsed.length - 1].timestamp) + 1
+            callback(parsed);
+            window.bloggercomments = null;
+          }
+          url += '&callback=bloggercomments';
+          var script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = url;
+          document.getElementsByTagName('head')[0].appendChild(script);
+        }
+      };
+      var hasMore = function() {
+        return !!cursor;
+      };
+      var getMeta = function(key, comment) {
+        if ('iswriter' == key) {
+          var matches = !!comment.author
+              && comment.author.name == config.authorName
+              && comment.author.profileUrl == config.authorUrl;
+          return matches ? 'true' : '';
+        } else if ('deletelink' == key) {
+          return config.baseUri + '/delete-comment.g?blogID='
+               + config.blogId + '&postID=' + comment.id;
+        } else if ('deleteclass' == key) {
+          return comment.deleteclass;
+        }
+        return '';
+      };
+
+      var replybox = null;
+      var replyUrlParts = null;
+      var replyParent = undefined;
+
+      var onReply = function(commentId, domId) {
+        if (replybox == null) {
+          // lazily cache replybox, and adjust to suit this style:
+          replybox = document.getElementById('comment-editor');
+          if (replybox != null) {
+            replybox.height = '250px';
+            replybox.style.display = 'block';
+            replyUrlParts = replybox.src.split('#');
+          }
+        }
+        if (replybox && (commentId !== replyParent)) {
+          replybox.src = '';
+          document.getElementById(domId).insertBefore(replybox, null);
+          replybox.src = replyUrlParts[0]
+              + (commentId ? '&parentID=' + commentId : '')
+              + '#' + replyUrlParts[1];
+          replyParent = commentId;
+        }
+      };
+
+      var hash = (window.location.hash || '#').substring(1);
+      var startThread, targetComment;
+      if (/^comment-form_/.test(hash)) {
+        startThread = hash.substring('comment-form_'.length);
+      } else if (/^c[0-9]+$/.test(hash)) {
+        targetComment = hash.substring(1);
+      }
+
+      // Configure commenting API:
+      var configJso = {
+        'maxDepth': config.maxThreadDepth
+      };
+      var provider = {
+        'id': config.postId,
+        'data': items,
+        'loadNext': paginator,
+        'hasMore': hasMore,
+        'getMeta': getMeta,
+        'onReply': onReply,
+        'rendered': true,
+        'initComment': targetComment,
+        'initReplyThread': startThread,
+        'config': configJso,
+        'messages': msgs
+      };
+
+      var render = function() {
+        if (window.goog && window.goog.comments) {
+          var holder = document.getElementById('comment-holder');
+          window.goog.comments.render(holder, provider);
+        }
+      };
+
+      // render now, or queue to render when library loads:
+      if (window.goog && window.goog.comments) {
+        render();
+      } else {
+        window.goog = window.goog || {};
+        window.goog.comments = window.goog.comments || {};
+        window.goog.comments.loadQueue = window.goog.comments.loadQueue || [];
+        window.goog.comments.loadQueue.push(render);
+      }
+    })();
+// ]]>
+  </script>
+<div id='comment-holder'>
+<div class="comment-thread toplevel-thread"><ol id="top-ra"><li class="comment" id="c8956494127387050696"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/00944853810027751369" rel="nofollow">techclimber</a></cite><span class="icon user "></span><span class="datetime secondary-text"><a rel="nofollow" href="http://blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html?showComment=1369536959053&amp;m=1#c8956494127387050696">26 May, 2013 04:55</a></span></div><p class="comment-content">Can you please post the x86 apk? I&#39;d like to give a pure x86 native game a try on my Fonepad.</p><span class="comment-actions secondary-text"><a class="comment-reply" target="_self" data-comment-id="8956494127387050696">Reply</a><span class="item-control blog-admin blog-admin pid-780815258"><a target="_self" href="https://www.blogger.com/delete-comment.g?blogID=8455893882609029883&amp;postID=8956494127387050696">Delete</a></span></span></div><div class="comment-replies"><div id="c8956494127387050696-rt" class="comment-thread inline-thread"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c8956494127387050696-ra" class="thread-chrome thread-expanded"><div><li class="comment" id="c1848567904937914825"><div class="avatar-image-container"><img src="//blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEia98QGSPRlsTOmnXm9yU-2aMpTdKE4VgMTkSOr2FZw5BPE8A0pkxwoQ4fc8W1gYC0KgfxXlMyvF6jjiYJ4ofyehWR2vMTKyWvGCG_u2oexOn4JLoppu7A9VADV2zVy7w/s45-c/android1329285453961%5B1%5D.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/08397372521342791150" rel="nofollow">apedroid</a></cite><span class="icon user blog-author"></span><span class="datetime secondary-text"><a rel="nofollow" href="http://blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html?showComment=1369680698453&amp;m=1#c1848567904937914825">27 May, 2013 20:51</a></span></div><p class="comment-content">Sorry, no, removing the ARM lib means you have resign the apk with a different key than the original one and I don&#39;t want to be responsible for distributing a &quot;hacked&quot; version of their app.<br><br>However it is easy to do yourself if you have the APK. Just open it up with your favorite ZIP-application (I use 7-zip) and delete the /lib/x86 folder. Then resign the apk and install it on your device. To sign it, just google for testsign.jar and you should be able to find both the .jar file and some instructions.</p><span class="comment-actions secondary-text"><span class="item-control blog-admin blog-admin pid-861144056"><a target="_self" href="https://www.blogger.com/delete-comment.g?blogID=8455893882609029883&amp;postID=1848567904937914825">Delete</a></span></span></div><div class="comment-replies"><div id="c1848567904937914825-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c1848567904937914825-ra" class="thread-chrome thread-expanded"><div></div><div id="c1848567904937914825-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="1848567904937914825">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c1848567904937914825-ce"></div></li></div><div id="c8956494127387050696-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="8956494127387050696">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c8956494127387050696-ce"></div></li><li class="comment" id="c1888702182820463388"><div class="avatar-image-container"><img src="//blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgxuq4DOyDs6MreKgkGFRPMQaSLyFtiHc28ka0bhY1Z0N1ZFL5r4TbDjPDHQiH8eq2xuiHmHi5bbrULh0EN0LF6l6NoWXqMq_c_BG-RtfgUx1F6hNcFHvzJsn5a7bi2EQ/s45-c/Homer.jpg" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/01300132020740289745" rel="nofollow">jean-michel</a></cite><span class="icon user "></span><span class="datetime secondary-text"><a rel="nofollow" href="http://blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html?showComment=1403519849475&amp;m=1#c1888702182820463388">23 June, 2014 12:37</a></span></div><p class="comment-content">how you generate the x86 code libraries</p><span class="comment-actions secondary-text"><a class="comment-reply" target="_self" data-comment-id="1888702182820463388">Reply</a><span class="item-control blog-admin blog-admin pid-645377680"><a target="_self" href="https://www.blogger.com/delete-comment.g?blogID=8455893882609029883&amp;postID=1888702182820463388">Delete</a></span></span></div><div class="comment-replies"><div id="c1888702182820463388-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c1888702182820463388-ra" class="thread-chrome thread-expanded"><div></div><div id="c1888702182820463388-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="1888702182820463388">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c1888702182820463388-ce"></div></li><li class="comment" id="c6301272469978923480"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/01189307632566827747" rel="nofollow">Royal Service</a></cite><span class="icon user "></span><span class="datetime secondary-text"><a rel="nofollow" href="http://blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html?showComment=1507730074627&amp;m=1#c6301272469978923480">11 October, 2017 15:54</a></span></div><p class="comment-content">An investor who bets on touch binary options is betting that the value of a certain option will rise up to or above a certain amount. <a href="https://www.7binaryoptions.com/brokers/" rel="nofollow">this website</a><br></p><span class="comment-actions secondary-text"><a class="comment-reply" target="_self" data-comment-id="6301272469978923480">Reply</a><span class="item-control blog-admin blog-admin pid-1814431505"><a target="_self" href="https://www.blogger.com/delete-comment.g?blogID=8455893882609029883&amp;postID=6301272469978923480">Delete</a></span></span></div><div class="comment-replies"><div id="c6301272469978923480-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c6301272469978923480-ra" class="thread-chrome thread-expanded"><div></div><div id="c6301272469978923480-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="6301272469978923480">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c6301272469978923480-ce"></div></li><li class="comment" id="c5787564874758285597"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/12114479635982380752" rel="nofollow">Robert</a></cite><span class="icon user "></span><span class="datetime secondary-text"><a rel="nofollow" href="http://blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html?showComment=1509605049286&amp;m=1#c5787564874758285597">02 November, 2017 07:44</a></span></div><p class="comment-content">Please continue this great work and I look forward to more of your awesome blog posts.<br><a href="https://247binaryoptions.com/highlow-signals-reliability/" rel="nofollow">open demo account</a></p><span class="comment-actions secondary-text"><a class="comment-reply" target="_self" data-comment-id="5787564874758285597">Reply</a><span class="item-control blog-admin blog-admin pid-1949401051"><a target="_self" href="https://www.blogger.com/delete-comment.g?blogID=8455893882609029883&amp;postID=5787564874758285597">Delete</a></span></span></div><div class="comment-replies"><div id="c5787564874758285597-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c5787564874758285597-ra" class="thread-chrome thread-expanded"><div></div><div id="c5787564874758285597-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="5787564874758285597">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c5787564874758285597-ce"></div></li><li class="comment" id="c8282997060467563898"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/07495751145041955175" rel="nofollow">Forex Mentor</a></cite><span class="icon user "></span><span class="datetime secondary-text"><a rel="nofollow" href="http://blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html?showComment=1528212842698&amp;m=1#c8282997060467563898">05 June, 2018 17:34</a></span></div><p class="comment-content">Every binary options broker and platform has been personally reviewed by us to help you find the best binary options broker for both beginners and experts. The <a href="http://www.fxnewinfo.com/int/binary/index.html" rel="nofollow">binary options brokers</a> list below shows which trading company came out on top based on different criteria.</p><span class="comment-actions secondary-text"><a class="comment-reply" target="_self" data-comment-id="8282997060467563898">Reply</a><span class="item-control blog-admin blog-admin pid-1648536805"><a target="_self" href="https://www.blogger.com/delete-comment.g?blogID=8455893882609029883&amp;postID=8282997060467563898">Delete</a></span></span></div><div class="comment-replies"><div id="c8282997060467563898-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c8282997060467563898-ra" class="thread-chrome thread-expanded"><div></div><div id="c8282997060467563898-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="8282997060467563898">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c8282997060467563898-ce"></div></li><li class="comment" id="c7455821110979641877"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/13267451115303879974" rel="nofollow">dagobertvalachovic</a></cite><span class="icon user "></span><span class="datetime secondary-text"><a rel="nofollow" href="http://blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html?showComment=1667797348982&amp;m=1#c7455821110979641877">07 November, 2022 06:02</a></span></div><p class="comment-content">These are obvious arguments why Korean residents should be cautious when enjoying in} at on-line casinos for real cash. In the market right now, lots of to 1000&#39;s of South Korea on-line casinos are operating. Therefore, discovering a super on-line casino in South <a href="https://xn--o80b910a26eepc81il5g.co/" rel="nofollow">우리카지노</a> Korea just isn&#39;t simple. We have listed the authorized and greatest  websites for on-line casino South Korea primarily based on important components like consumer experience, gaming choices,  bonuses, fee strategies, and more. The average on-line casino in South Korea boasts trendy websites and up-to-date slots.</p><span class="comment-actions secondary-text"><a class="comment-reply" target="_self" data-comment-id="7455821110979641877">Reply</a><span class="item-control blog-admin blog-admin pid-575383693"><a target="_self" href="https://www.blogger.com/delete-comment.g?blogID=8455893882609029883&amp;postID=7455821110979641877">Delete</a></span></span></div><div class="comment-replies"><div id="c7455821110979641877-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c7455821110979641877-ra" class="thread-chrome thread-expanded"><div></div><div id="c7455821110979641877-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="7455821110979641877">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c7455821110979641877-ce"></div></li></ol><div id="top-continue" class="continue"><a class="comment-reply" target="_self">Add comment</a></div><div class="comment-replybox-thread" id="top-ce"></div><div class="loadmore hidden" data-post-id="2820185294462860160"><a target="_self">Load more...</a></div></div>
+</div>
+</div>
+<p class='comment-footer'>
+<div class='comment-form'>
+<a name='comment-form'></a>
+<p>
+</p>
+<a href='https://www.blogger.com/comment/frame/8455893882609029883?po=2820185294462860160&hl=en&m=1' id='comment-editor-src'></a>
+<iframe allowtransparency='true' class='blogger-iframe-colorize blogger-comment-from-post' frameborder='0' height='410px' id='comment-editor' name='comment-editor' src='' style='display: none' width='100%'></iframe>
+<script src='https://www.blogger.com/static/v1/jsbin/2315299244-comment_from_post_iframe.js' type='text/javascript'></script>
+<script type='text/javascript'>
+      BLOG_CMT_createIframe('https://www.blogger.com/rpc_relay.html');
+    </script>
+</div>
+</p>
+<div id='backlinks-container'>
+<div id='Blog1_backlinks-container'>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class='blog-pager' id='blog-pager'>
+<div class='mobile-link-button' id='blog-pager-newer-link'>
+<a class='blog-pager-newer-link' href='http://blog.apedroid.com/2013/05/how-to-check-if-app-uses-binary.html?m=1' id='Blog1_blog-pager-newer-link' title='Newer Post'>&lsaquo;</a>
+</div>
+<div class='mobile-link-button' id='blog-pager-older-link'>
+<a class='blog-pager-older-link' href='http://blog.apedroid.com/2013/04/external-keyboard-helper-pro-59-released.html?m=1' id='Blog1_blog-pager-older-link' title='Older Post'>&rsaquo;</a>
+</div>
+<div class='mobile-link-button' id='blog-pager-home-link'>
+<a class='home-link' href='http://blog.apedroid.com/?m=1'>Home</a>
+</div>
+<div class='mobile-desktop-link'>
+<a class='home-link' href='http://blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html?m=0'>View web version</a>
+</div>
+</div>
+<div class='clear'></div>
+</div></div>
+</div>
+</div>
+<div class='column-left-outer'>
+<div class='column-left-inner'>
+<aside>
+</aside>
+</div>
+</div>
+<div class='column-right-outer'>
+<div class='column-right-inner'>
+<aside>
+</aside>
+</div>
+</div>
+</div>
+<div style='clear: both'></div>
+<!-- columns -->
+</div>
+<!-- main -->
+</div>
+</div>
+<div class='main-cap-bottom cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+<footer>
+<div class='footer-outer'>
+<div class='footer-cap-top cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left footer-fauxborder-left'>
+<div class='fauxborder-right footer-fauxborder-right'></div>
+<div class='region-inner footer-inner'>
+<div class='foot no-items section' id='footer-1'></div>
+<!-- outside of the include in order to lock Attribution widget -->
+<div class='foot section' id='footer-3' name='Footer'><div class='widget AdSense' data-version='1' id='AdSenseMobileFOOTER'>
+<div class='widget-content'>
+<script type="text/javascript"><!--
+google_ad_client="pub-4787149681452915";
+google_ad_format="300X250_mb";
+google_ad_type="text_image";
+google_ad_width=300;
+google_ad_height=250;
+google_ad_host="pub-1556223355139109";
+
+
+
+
+google_ad_host_channel="0001+S0009+L0007";
+google_color_border="FFFFFF";
+google_color_bg="FFFFFF";
+google_color_link="A4C639";
+google_color_url="908D6A";
+google_color_text="333333";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+<div class='clear'></div>
+</div>
+</div><div class='widget Attribution' data-version='1' id='Attribution1'>
+<div class='widget-content' style='text-align: center;'>
+Powered by <a href='https://www.blogger.com' target='_blank'>Blogger</a>.
+</div>
+<div class='clear'></div>
+</div></div>
+</div>
+</div>
+<div class='footer-cap-bottom cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+</footer>
+<!-- content -->
+</div>
+</div>
+<div class='content-cap-bottom cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+</div>
+<script type='text/javascript'>
+    window.setTimeout(function() {
+        document.body.className = document.body.className.replace('loading', '');
+      }, 10);
+  </script>
+
+<script type="text/javascript" src="https://www.blogger.com/static/v1/widgets/2591855913-widgets.js"></script>
+<script type='text/javascript'>
+var BLOG_BASE_IMAGE_URL = 'https://resources.blogblog.com/img';var BLOG_LANG_DIR = 'ltr';window['__wavt'] = 'AOuZoY5cVlGj6GM_qG2JQSi6cn56oSf0_A:1730852636781';_WidgetManager._Init('//www.blogger.com/rearrange?blogID\x3d8455893882609029883','//blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html?m\x3d1','8455893882609029883');
+_WidgetManager._SetDataContext([{'name': 'blog', 'data': {'blogId': '8455893882609029883', 'title': 'apedroid', 'url': 'http://blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html?m\x3d1', 'canonicalUrl': 'http://blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html', 'homepageUrl': 'http://blog.apedroid.com/?m\x3d1', 'searchUrl': 'http://blog.apedroid.com/search', 'canonicalHomepageUrl': 'http://blog.apedroid.com/', 'blogspotFaviconUrl': 'http://blog.apedroid.com/favicon.ico', 'bloggerUrl': 'https://www.blogger.com', 'hasCustomDomain': true, 'httpsEnabled': false, 'enabledCommentProfileImages': true, 'gPlusViewType': 'FILTERED_POSTMOD', 'adultContent': false, 'analyticsAccountNumber': 'UA-37080104-1', 'encoding': 'UTF-8', 'locale': 'en', 'localeUnderscoreDelimited': 'en', 'languageDirection': 'ltr', 'isPrivate': false, 'isMobile': true, 'isMobileRequest': true, 'mobileClass': ' mobile', 'isPrivateBlog': false, 'isDynamicViewsAvailable': true, 'feedLinks': '\x3clink rel\x3d\x22alternate\x22 type\x3d\x22application/atom+xml\x22 title\x3d\x22apedroid - Atom\x22 href\x3d\x22http://blog.apedroid.com/feeds/posts/default\x22 /\x3e\n\x3clink rel\x3d\x22alternate\x22 type\x3d\x22application/rss+xml\x22 title\x3d\x22apedroid - RSS\x22 href\x3d\x22http://blog.apedroid.com/feeds/posts/default?alt\x3drss\x22 /\x3e\n\x3clink rel\x3d\x22service.post\x22 type\x3d\x22application/atom+xml\x22 title\x3d\x22apedroid - Atom\x22 href\x3d\x22https://www.blogger.com/feeds/8455893882609029883/posts/default\x22 /\x3e\n\n\x3clink rel\x3d\x22alternate\x22 type\x3d\x22application/atom+xml\x22 title\x3d\x22apedroid - Atom\x22 href\x3d\x22http://blog.apedroid.com/feeds/2820185294462860160/comments/default\x22 /\x3e\n', 'meTag': '', 'adsenseClientId': 'ca-pub-4787149681452915', 'adsenseHostId': 'ca-host-pub-1556223355139109', 'adsenseHasAds': true, 'adsenseAutoAds': false, 'boqCommentIframeForm': true, 'loginRedirectParam': '', 'view': '', 'dynamicViewsCommentsSrc': '//www.blogblog.com/dynamicviews/4224c15c4e7c9321/js/comments.js', 'dynamicViewsScriptSrc': '//www.blogblog.com/dynamicviews/6eb7ce967db05cf0', 'plusOneApiSrc': 'https://apis.google.com/js/platform.js', 'disableGComments': true, 'interstitialAccepted': false, 'sharing': {'platforms': [{'name': 'Get link', 'key': 'link', 'shareMessage': 'Get link', 'target': ''}, {'name': 'Facebook', 'key': 'facebook', 'shareMessage': 'Share to Facebook', 'target': 'facebook'}, {'name': 'BlogThis!', 'key': 'blogThis', 'shareMessage': 'BlogThis!', 'target': 'blog'}, {'name': 'Twitter', 'key': 'twitter', 'shareMessage': 'Share to Twitter', 'target': 'twitter'}, {'name': 'Pinterest', 'key': 'pinterest', 'shareMessage': 'Share to Pinterest', 'target': 'pinterest'}, {'name': 'Email', 'key': 'email', 'shareMessage': 'Email', 'target': 'email'}], 'disableGooglePlus': true, 'googlePlusShareButtonWidth': 0, 'googlePlusBootstrap': '\x3cscript type\x3d\x22text/javascript\x22\x3ewindow.___gcfg \x3d {\x27lang\x27: \x27en\x27};\x3c/script\x3e'}, 'hasCustomJumpLinkMessage': false, 'jumpLinkMessage': 'Read more', 'pageType': 'item', 'postId': '2820185294462860160', 'postImageThumbnailUrl': 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifQJWFYqs9tGpCbn0wh8UCIQrxzVCzwPXhYz5ZY7KeHFYsIcKVEyKm1EasnRBbiru0zC0iVsneibR8JF6QPRcloCtHb4sxvMCWy_dABsJdK-nhWCPhv7h36xhUb04XdIG5tlY1zVdXgtnt/s72-c/epic_binary_translation.png', 'postImageUrl': 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifQJWFYqs9tGpCbn0wh8UCIQrxzVCzwPXhYz5ZY7KeHFYsIcKVEyKm1EasnRBbiru0zC0iVsneibR8JF6QPRcloCtHb4sxvMCWy_dABsJdK-nhWCPhv7h36xhUb04XdIG5tlY1zVdXgtnt/s1600/epic_binary_translation.png', 'pageName': 'Binary translation vs native x86 code', 'pageTitle': 'apedroid: Binary translation vs native x86 code'}}, {'name': 'features', 'data': {}}, {'name': 'messages', 'data': {'edit': 'Edit', 'linkCopiedToClipboard': 'Link copied to clipboard!', 'ok': 'Ok', 'postLink': 'Post Link'}}, {'name': 'template', 'data': {'name': 'Awesome Inc.', 'localizedName': 'Awesome Inc.', 'isResponsive': false, 'isAlternateRendering': true, 'isCustom': false, 'variant': 'renewable', 'variantId': 'renewable'}}, {'name': 'view', 'data': {'classic': {'name': 'classic', 'url': '?view\x3dclassic'}, 'flipcard': {'name': 'flipcard', 'url': '?view\x3dflipcard'}, 'magazine': {'name': 'magazine', 'url': '?view\x3dmagazine'}, 'mosaic': {'name': 'mosaic', 'url': '?view\x3dmosaic'}, 'sidebar': {'name': 'sidebar', 'url': '?view\x3dsidebar'}, 'snapshot': {'name': 'snapshot', 'url': '?view\x3dsnapshot'}, 'timeslide': {'name': 'timeslide', 'url': '?view\x3dtimeslide'}, 'isMobile': true, 'title': 'Binary translation vs native x86 code', 'description': 'I recently bought an Asus Fonepad partly because I wanted to test an Intel based Android device. It turned out it\x27s a really nice device and...', 'featuredImage': 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifQJWFYqs9tGpCbn0wh8UCIQrxzVCzwPXhYz5ZY7KeHFYsIcKVEyKm1EasnRBbiru0zC0iVsneibR8JF6QPRcloCtHb4sxvMCWy_dABsJdK-nhWCPhv7h36xhUb04XdIG5tlY1zVdXgtnt/s1600/epic_binary_translation.png', 'url': 'http://blog.apedroid.com/2013/05/binary-translation-vs-native-x86-code.html?m\x3d1', 'type': 'item', 'isSingleItem': true, 'isMultipleItems': false, 'isError': false, 'isPage': false, 'isPost': true, 'isHomepage': false, 'isArchive': false, 'isLabelSearch': false, 'postId': 2820185294462860160}}]);
+_WidgetManager._RegisterWidget('_AdSenseView', new _WidgetInfo('AdSenseMobileHEADER', 'header', document.getElementById('AdSenseMobileHEADER'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_HeaderView', new _WidgetInfo('Header1', 'header', document.getElementById('Header1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_BlogView', new _WidgetInfo('Blog1', 'main', document.getElementById('Blog1'), {'cmtInteractionsEnabled': false, 'mobile': true}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_AdSenseView', new _WidgetInfo('AdSenseMobileFOOTER', 'footer-3', document.getElementById('AdSenseMobileFOOTER'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_AttributionView', new _WidgetInfo('Attribution1', 'footer-3', document.getElementById('Attribution1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_NavbarView', new _WidgetInfo('Navbar1', 'navbar', document.getElementById('Navbar1'), {}, 'displayModeFull'));
+</script>
+</body>
+</html>
